@@ -33,4 +33,19 @@ public class MainViewModel extends AndroidViewModel {
     public void deleteTask(TaskEntry taskEntry) {
         tasksRepository.deleteTasks(taskEntry);
     }
+
+    public LiveData<List<TaskEntry>> searchTask(String str){
+        tasks = str.isEmpty() ? tasksRepository.getloadAllTasks() : tasksRepository.searchTask(str);
+        return tasks;
+    }
+
+    public LiveData<List<TaskEntry>> filterByDate(){
+        tasks = tasksRepository.filterByDate();
+        return tasks;
+    }
+
+    public LiveData<List<TaskEntry>> filterByName(){
+        tasks = tasksRepository.filterByName();
+        return tasks;
+    }
 }

@@ -22,6 +22,15 @@ public interface TaskDao {
     @Query("SELECT * FROM task WHERE id=:id")
     LiveData<TaskEntry> loadTaskById(int id);
 
+    @Query("SELECT * FROM task WHERE title LIKE '%' || :str || '%'")
+    LiveData<List<TaskEntry>> searchTask(String str);
+
+    @Query("SELECT * FROM task ORDER BY updated_at DESC")
+    LiveData<List<TaskEntry>> filterByDate();
+
+    @Query("SELECT * FROM task ORDER BY title")
+    LiveData<List<TaskEntry>> filterByName();
+
     @Insert
     void insertTask(TaskEntry taskEntry);
 

@@ -35,4 +35,16 @@ public class TasksRepository  {
     public void updateTaskById(TaskEntry task) {
         database.taskDao().updateTask(task);
     }
+
+    public LiveData<List<TaskEntry>> searchTask(String str) {
+        return database.taskDao().searchTask(str);
+    }
+
+    public LiveData<List<TaskEntry>> filterByDate() {
+        return database.taskDao().filterByDate();
+    }
+
+    public LiveData<List<TaskEntry>> filterByName() {
+        return database.taskDao().filterByName();
+    }
 }

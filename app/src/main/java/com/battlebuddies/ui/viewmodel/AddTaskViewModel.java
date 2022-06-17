@@ -39,4 +39,6 @@ public class AddTaskViewModel extends ViewModel {
     public LiveData<List<CategoryEntry>> getAllCategories(){
         return categoriesRepository.getloadAllTasks();
     }
+
+
 }

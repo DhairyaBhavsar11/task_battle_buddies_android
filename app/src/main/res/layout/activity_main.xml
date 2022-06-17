@@ -3,16 +3,47 @@
     This layout defines the main activity screen and displays a listtaskEntriesasks (if they exist),
     and a floating action button that launches another activity.
 -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:orientation="vertical"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:id="@+id/llSearch"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_marginTop="15dp"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/edSearch"
+            android:layout_width="0dp"
+            android:layout_weight="9"
+            android:padding="15dp"
+            android:background="@drawable/bg_white_rounded"
+            android:hint="Search Task"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="25dp"/>
+
+        <ImageView
+            android:id="@+id/ivFilter"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:src="@mipmap/filter"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="15dp"
+            android:layout_height="30dp"
+            android:tint="@color/colorPrimary"
+            android:layout_marginRight="15dp" />
+    </LinearLayout>
     <!-- RecyclerView that is responsible for holding a listtaskEntrytask data -->
-        <androidx.recyclerview.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewTasks"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/llSearch"
+        android:layout_marginTop="15dp"
         android:clipToPadding="false"
         android:paddingBottom="80dp" />
 
@@ -21,10 +52,11 @@
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
         android:layout_margin="@dimen/fab_margin"
         android:tint="@android:color/white"
         app:srcCompat="@android:drawable/ic_input_add" />
 
-</FrameLayout>
+</RelativeLayout>
 

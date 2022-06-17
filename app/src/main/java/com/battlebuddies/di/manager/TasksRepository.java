@@ -32,7 +32,26 @@ public class TasksRepository  {
         database.taskDao().deleteTask(taskEntry);
     }
 
+    public void deleteTasks(int id) {
+        database.taskDao().deleteTask(id);
+    }
+
     public void updateTaskById(TaskEntry task) {
         database.taskDao().updateTask(task);
+    }
+
+    public LiveData<List<TaskEntry>> searchTask(String str) {
+        return database.taskDao().searchTask(str);
+    }
+
+    public LiveData<List<TaskEntry>> filterByDate() {
+        return database.taskDao().filterByDate();
+    }
+
+    public LiveData<List<TaskEntry>> filterByName() {
+        return database.taskDao().filterByName();
+    }
+    public LiveData<List<TaskEntry>> loadAllChildTasks(int id) {
+        return database.taskDao().loadAllChildTasks(id);
     }
 }

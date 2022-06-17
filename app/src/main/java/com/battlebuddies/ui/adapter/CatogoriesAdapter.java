@@ -1,26 +1,27 @@
 package com.battlebuddies.ui.adapter;
 
 import android.content.Context;
-import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.battlebuddies.R;
+import com.battlebuddies.di.model.CategoryEntry;
 import com.battlebuddies.di.model.TaskEntry;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * This TaskAdapter creates and binds ViewHolders, that hold the description and priority of a task,
  * to a RecyclerView to efficiently display data.
  */
-public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
+public class CatogoriesAdapter extends RecyclerView.Adapter<CatogoriesAdapter.CategoryViewHolder> {
 
     // Constant for date format
     private static final String DATE_FORMAT = "dd/MM/yyy HH:mm:ss";
@@ -28,7 +29,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     // Member variable to handle item clicks
     final private ItemClickListener mItemClickListener;
     // Class variables for the List that holds task data and the Context
-    private List<TaskEntry> mTaskEntries;
+    private List<CategoryEntry> mTaskEntries;
     private Context mContext;
     // Date formatter
     private SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
@@ -39,7 +40,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
      * @param context  the current Context
      * @param listener the ItemClickListener
      */
-    public TaskAdapter(Context context, ItemClickListener listener) {
+    public CatogoriesAdapter(Context context, ItemClickListener listener) {
         mContext = context;
         mItemClickListener = listener;
     }
@@ -50,12 +51,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
      * @return A new TaskViewHolder that holds the view for each task
      */
     @Override
-    public TaskViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public CategoryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // Inflate the task_layout to a view
         View view = LayoutInflater.from(mContext)
                 .inflate(R.layout.task_layout, parent, false);
 
-        return new TaskViewHolder(view);
+        return new CategoryViewHolder(view);
     }
 
     /**
@@ -65,9 +66,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
      * @param position The position of the data in the Cursor
      */
     @Override
-    public void onBindViewHolder(TaskViewHolder holder, int position) {
+    public void onBindViewHolder(CategoryViewHolder holder, int position) {
         // Determine the values of the wanted data
-        TaskEntry taskEntry = mTaskEntries.get(position);
+        CategoryEntry taskEntry = mTaskEntries.get(position);
         String description = taskEntry.getTitle();
         String updatedAt = dateFormat.format(taskEntry.getUpdatedAt());
 
@@ -114,21 +115,21 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
      * When data changes, this method updates the list of taskEntries
      * and notifies the adapter to use the new values on it
      */
-    public void setTasks(List<TaskEntry> taskEntries) {
+    public void setTasks(List<CategoryEntry> taskEntries) {
         mTaskEntries = taskEntries;
         notifyDataSetChanged();
     }
 
-    public List<TaskEntry> getTasks() {
+    public List<CategoryEntry> getTasks() {
         return mTaskEntries;
     }
 
     public interface ItemClickListener {
-        void onItemClickListener(int itemId,int parentId, String title);
+        void onItemClickListener(int itemId);
     }
 
     // Inner class for creating ViewHolders
-    class TaskViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class CategoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         // Class variables for the task description and priority TextViews
         TextView taskDescriptionView;
@@ -139,7 +140,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
          *
          * @param itemView The view inflated in onCreateViewHolder
          */
-        public TaskViewHolder(View itemView) {
+        public CategoryViewHolder(View itemView) {
             super(itemView);
 
             taskDescriptionView = itemView.findViewById(R.id.taskDescription);
@@ -150,9 +151,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         @Override
         public void onClick(View view) {
             int elementId = mTaskEntries.get(getAdapterPosition()).getId();
-            int parentId = mTaskEntries.get(getAdapterPosition()).getPatentTaskId();
-            String name = mTaskEntries.get(getAdapterPosition()).getTitle();
-            mItemClickListener.onItemClickListener(elementId,parentId,name);
+            mItemClickListener.onItemClickListener(elementId);
         }
     }
 }

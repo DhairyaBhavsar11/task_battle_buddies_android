@@ -15,7 +15,6 @@ public class MainViewModel extends AndroidViewModel {
     // Constant for logging
     private static final String TAG = MainViewModel.class.getSimpleName();
 
-    private LiveData<List<TaskEntry>> tasks;
     private final TasksRepository tasksRepository;
     public MainViewModel(Application application) {
         super(application);
@@ -23,14 +22,28 @@ public class MainViewModel extends AndroidViewModel {
         Log.d(TAG, "Actively retrieving the tasks from the DataBase");
         //tasks = database.taskDao().loadAllTasks();
         tasksRepository = new TasksRepository(database);
-        tasks = tasksRepository.getloadAllTasks();
     }
 
     public LiveData<List<TaskEntry>> getTasks() {
-        return tasks;
+        return tasksRepository.getloadAllTasks();
     }
 
     public void deleteTask(TaskEntry taskEntry) {
         tasksRepository.deleteTasks(taskEntry);
+    }
+
+    public LiveData<List<TaskEntry>> searchTask(String str){
+        return str.isEmpty() ? tasksRepository.getloadAllTasks() : tasksRepository.searchTask(str);
+    }
+
+    public LiveData<List<TaskEntry>> filterByDate(){
+        return tasksRepository.filterByDate();
+    }
+
+    public LiveData<List<TaskEntry>> filterByName(){
+        return tasksRepository.filterByName();
+    }
+    public LiveData<List<TaskEntry>> getChildTasks(int id) {
+        return tasksRepository.loadAllChildTasks(id);
     }
 }

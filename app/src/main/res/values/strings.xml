@@ -21,5 +21,12 @@
     <string name="update_button">Update</string>
     <string name="catogories">Catogories</string>
     <string name="title">Title</string>
+    <string name="category_title">Category Title</string>
+    <string name="add_category">Add new Category</string>
+    <string name="category">Category</string>
+    <string name="by_date">By Date</string>
+    <string name="by_name">By Name</string>
+    <string name="parent_task">Parent Task</string>
+    <string name="complete_task">complete task</string>
 
 </resources>

@@ -16,11 +16,23 @@ import com.battlebuddies.di.model.TaskEntry;
 @Dao
 public interface TaskDao {
 
-    @Query("SELECT * FROM task ORDER BY id")
+    @Query("SELECT * FROM task WHERE patentTaskId == -1 ORDER BY id")
     LiveData<List<TaskEntry>> loadAllTasks();
+
+    @Query("SELECT * FROM task WHERE patentTaskId=:id")
+    LiveData<List<TaskEntry>> loadAllChildTasks(int id);
 
     @Query("SELECT * FROM task WHERE id=:id")
     LiveData<TaskEntry> loadTaskById(int id);
+
+    @Query("SELECT * FROM task WHERE title LIKE '%' || :str || '%' AND patentTaskId == -1" )
+    LiveData<List<TaskEntry>> searchTask(String str);
+
+    @Query("SELECT * FROM task WHERE patentTaskId == -1 ORDER BY updated_at DESC")
+    LiveData<List<TaskEntry>> filterByDate();
+
+    @Query("SELECT * FROM task WHERE patentTaskId == -1 ORDER BY title")
+    LiveData<List<TaskEntry>> filterByName();
 
     @Insert
     void insertTask(TaskEntry taskEntry);
@@ -30,6 +42,9 @@ public interface TaskDao {
 
     @Delete
     void deleteTask(TaskEntry taskEntry);
+
+    @Query("DELETE FROM task WHERE id=:id")
+    void deleteTask(int id);
 
 
 }

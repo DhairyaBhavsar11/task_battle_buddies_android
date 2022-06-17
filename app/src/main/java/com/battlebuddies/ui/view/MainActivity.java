@@ -20,7 +20,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.PopupMenu;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.battlebuddies.R;
 import com.battlebuddies.ui.adapter.TaskAdapter;
@@ -28,9 +33,13 @@ import com.battlebuddies.di.database.AppDatabase;
 import com.battlebuddies.data.AppExecutors;
 import com.battlebuddies.di.model.TaskEntry;
 import com.battlebuddies.ui.viewmodel.MainViewModel;
+import com.jakewharton.rxbinding2.widget.RxTextView;
+import com.jakewharton.rxbinding2.widget.TextViewTextChangeEvent;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
@@ -39,6 +48,11 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 
 public class MainActivity extends AppCompatActivity implements TaskAdapter.ItemClickListener {
@@ -50,6 +64,10 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.ItemC
     private TaskAdapter mAdapter;
     private AppDatabase mDb;
     MainViewModel viewModel;
+    private CompositeDisposable disposable = new CompositeDisposable();
+    private EditText edSearch;
+    private ImageView ivFilter;
+    private boolean isSearchClear = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +76,48 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.ItemC
 
         // Set the RecyclerView to its corresponding view
         mRecyclerView = findViewById(R.id.recyclerViewTasks);
+        edSearch = findViewById(R.id.edSearch);
+        ivFilter = findViewById(R.id.ivFilter);
+
+        ivFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popupMenu = new PopupMenu(MainActivity.this,v);
+                popupMenu.inflate(R.menu.filter_menu);
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()){
+                            case R.id.filter_date:
+                                isSearchClear = true;
+                                edSearch.setText("");
+                                viewModel.filterByDate().observe(MainActivity.this, new Observer<List<TaskEntry>>() {
+                                    @Override
+                                    public void onChanged(List<TaskEntry> taskEntries) {
+                                        mAdapter.setTasks(taskEntries);
+                                        mAdapter.notifyDataSetChanged();
+                                    }
+                                });
+                                break;
+                            case R.id.filter_name:
+                                isSearchClear = true;
+                                edSearch.setText("");
+                                viewModel.filterByName().observe(MainActivity.this, new Observer<List<TaskEntry>>() {
+                                    @Override
+                                    public void onChanged(List<TaskEntry> taskEntries) {
+                                        mAdapter.setTasks(taskEntries);
+                                        mAdapter.notifyDataSetChanged();
+                                    }
+                                });
+                                break;
+                        }
+                        return false;
+                    }
+                });
+                popupMenu.show();
+
+            }
+        });
 
         // Set the layout for the RecyclerView to be a linear layout, which measures and
         // positions items within a RecyclerView into a linear list
@@ -76,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.ItemC
          An ItemTouchHelper enables touch behavior (like swipe and move) on each ViewHolder,
          and uses callbacks to signal when a user is performing these actions.
          */
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        /*new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 return false;
@@ -97,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.ItemC
                     }
                 });
             }
-        }).attachToRecyclerView(mRecyclerView);
+        }).attachToRecyclerView(mRecyclerView);*/
 
         /*
          Set the Floating Action Button (FAB) to its corresponding View.
@@ -114,6 +174,44 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.ItemC
                 startActivity(addTaskIntent);
             }
         });
+
+        disposable.add(RxTextView.textChangeEvents(edSearch)
+                .skipInitialValue()
+                .debounce(300, TimeUnit.MILLISECONDS)
+                .distinctUntilChanged()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(searchContacts()));
+    }
+
+    private DisposableObserver<TextViewTextChangeEvent> searchContacts() {
+        return new DisposableObserver<TextViewTextChangeEvent>() {
+            @Override
+            public void onNext(TextViewTextChangeEvent textViewTextChangeEvent) {
+                if (!isSearchClear) {
+                    Log.d(TAG, "Search query: " + textViewTextChangeEvent.text());
+                    viewModel.searchTask(textViewTextChangeEvent.text().toString()).observe(MainActivity.this, new Observer<List<TaskEntry>>() {
+                        @Override
+                        public void onChanged(List<TaskEntry> taskEntries) {
+                            mAdapter.setTasks(taskEntries);
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    });
+                }else {
+                    isSearchClear = false;
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.e(TAG, "onError: " + e.getMessage());
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        };
     }
 
     private void setupViewModel() {
@@ -127,13 +225,35 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.ItemC
             }
         });
     }
+    private boolean isClickItem = false;
     @Override
-    public void onItemClickListener(int itemId) {
+    public void onItemClickListener(final int itemId, final int parentId, final String title) {
+        isClickItem = true;
         // Launch AddTaskActivity adding the itemId as an extra in the intent
         // COMPLETED (2) Launch AddTaskActivity with itemId as extra for the key AddTaskActivity.EXTRA_TASK_ID
-        Intent intent = new Intent(MainActivity.this, AddTaskActivity.class);
-        intent.putExtra(AddTaskActivity.EXTRA_TASK_ID, itemId);
-        startActivity(intent);
+        viewModel.getChildTasks(itemId).observe(MainActivity.this, new Observer<List<TaskEntry>>() {
+            @Override
+            public void onChanged(List<TaskEntry> taskEntries) {
+                if (isClickItem) {
+                    isClickItem = false;
+                    viewModel.getChildTasks(itemId).removeObserver(this);
+                    if (taskEntries != null) {
+                        if (taskEntries.size() > 0) {
+                            Intent intent = new Intent(MainActivity.this, SubTaskListActivity.class);
+                            intent.putExtra(AddTaskActivity.EXTRA_TASK_ID, itemId);
+                            intent.putExtra("name", title);
+                            startActivity(intent);
+                        } else {
+                            Intent intent = new Intent(MainActivity.this, AddTaskActivity.class);
+                            intent.putExtra(AddTaskActivity.EXTRA_TASK_ID, itemId);
+                            startActivity(intent);
+                        }
+                    }
+                }
+
+            }
+        });
+
     }
 
     @Override
@@ -141,5 +261,17 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.ItemC
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_main_setting:
+                Intent intent = new Intent(MainActivity.this,CategoriesActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

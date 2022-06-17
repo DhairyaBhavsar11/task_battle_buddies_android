@@ -33,6 +33,21 @@
         android:hint="@string/edit_task_description"
         android:paddingBottom="@dimen/activity_horizontal_margin" />
 
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="5dp"
+        android:text="@string/category"
+        android:layout_marginLeft="5dp" />
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:padding="0dp"
+        android:id="@+id/spinnerCategories"/>
+
     <!-- Add button -->
     <Button
         android:id="@+id/saveButton"

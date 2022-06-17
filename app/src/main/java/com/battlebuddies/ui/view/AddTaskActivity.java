@@ -44,9 +44,6 @@ public class AddTaskActivity extends AppCompatActivity {
     // Extra for the task ID to be received after rotation
     public static final String INSTANCE_TASK_ID = "instanceTaskId";
     // Constants for priority
-    public static final int PRIORITY_HIGH = 1;
-    public static final int PRIORITY_MEDIUM = 2;
-    public static final int PRIORITY_LOW = 3;
     // Constant for default task id to be used when not in update mode
     private static final int DEFAULT_TASK_ID = -1;
     // Constant for logging

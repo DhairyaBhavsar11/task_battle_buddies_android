@@ -9,10 +9,12 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
 import com.battlebuddies.data.DateConverter;
+import com.battlebuddies.di.dao.CategoryDao;
+import com.battlebuddies.di.model.CategoryEntry;
 import com.battlebuddies.di.model.TaskEntry;
 import com.battlebuddies.di.dao.TaskDao;
 
-@Database(entities = {TaskEntry.class}, version = 1, exportSchema = false)
+@Database(entities = {TaskEntry.class, CategoryEntry.class}, version = 1, exportSchema = false)
 @TypeConverters(DateConverter.class)
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -39,5 +41,6 @@ public abstract class AppDatabase extends RoomDatabase {
     }
 
     public abstract TaskDao taskDao();
+    public abstract CategoryDao categoryDao();
 
 }

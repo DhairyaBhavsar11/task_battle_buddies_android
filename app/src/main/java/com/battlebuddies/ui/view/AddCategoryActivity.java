@@ -29,7 +29,10 @@ import androidx.lifecycle.ViewModelProviders;
 import com.battlebuddies.R;
 import com.battlebuddies.data.AppExecutors;
 import com.battlebuddies.di.database.AppDatabase;
+import com.battlebuddies.di.model.CategoryEntry;
 import com.battlebuddies.di.model.TaskEntry;
+import com.battlebuddies.ui.viewmodel.AddCategoryViewModel;
+import com.battlebuddies.ui.viewmodel.AddCategoryViewModelFactory;
 import com.battlebuddies.ui.viewmodel.AddTaskViewModel;
 import com.battlebuddies.ui.viewmodel.AddTaskViewModelFactory;
 
@@ -43,22 +46,19 @@ public class AddCategoryActivity extends AppCompatActivity {
     // Extra for the task ID to be received after rotation
     public static final String INSTANCE_TASK_ID = "instanceTaskId";
     // Constants for priority
-    public static final int PRIORITY_HIGH = 1;
-    public static final int PRIORITY_MEDIUM = 2;
-    public static final int PRIORITY_LOW = 3;
     // Constant for default task id to be used when not in update mode
     private static final int DEFAULT_TASK_ID = -1;
     // Constant for logging
     private static final String TAG = AddCategoryActivity.class.getSimpleName();
     // Fields for views
-    EditText editTextTitle,editTextDescription;
+    EditText editTextTitle;
     Button mButton;
 
     private int mTaskId = DEFAULT_TASK_ID;
 
     // Member variable for the Database
     private AppDatabase mDb;
-    AddTaskViewModel viewModel;
+    AddCategoryViewModel viewModel;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_category);
@@ -76,11 +76,11 @@ public class AddCategoryActivity extends AppCompatActivity {
             mButton.setText(R.string.update_button);
             if (mTaskId == DEFAULT_TASK_ID) {
                 mTaskId = intent.getIntExtra(EXTRA_TASK_ID, DEFAULT_TASK_ID);
-                AddTaskViewModelFactory factory = new AddTaskViewModelFactory(mDb, mTaskId);
-                viewModel = ViewModelProviders.of(this, factory).get(AddTaskViewModel.class);
-                viewModel.getTask().observe(this, new Observer<TaskEntry>() {
+                AddCategoryViewModelFactory factory = new AddCategoryViewModelFactory(mDb, mTaskId);
+                viewModel = ViewModelProviders.of(this, factory).get(AddCategoryViewModel.class);
+                viewModel.getTask().observe(this, new Observer<CategoryEntry>() {
                     @Override
-                    public void onChanged(TaskEntry taskEntry) {
+                    public void onChanged(CategoryEntry taskEntry) {
                         viewModel.getTask().removeObserver(this);
                         populateUI(taskEntry);
                     }
@@ -100,7 +100,6 @@ public class AddCategoryActivity extends AppCompatActivity {
      */
     private void initViews() {
         editTextTitle = findViewById(R.id.editTextTitle);
-        editTextDescription = findViewById(R.id.editTextDescription);
 
         mButton = findViewById(R.id.saveButton);
         mButton.setOnClickListener(new View.OnClickListener() {
@@ -116,7 +115,7 @@ public class AddCategoryActivity extends AppCompatActivity {
      *
      * @param task the taskEntry to populate the UI
      */
-    private void populateUI(TaskEntry task) {
+    private void populateUI(CategoryEntry task) {
         // COMPLETED (7) return if the task is null
         if (task == null) {
             return;
@@ -124,7 +123,6 @@ public class AddCategoryActivity extends AppCompatActivity {
 
         // COMPLETED (8) use the variable task to populate the UI
         editTextTitle.setText(task.getTitle());
-        editTextDescription.setText(task.getDescription());
     }
 
     /**
@@ -133,10 +131,9 @@ public class AddCategoryActivity extends AppCompatActivity {
      */
     public void onSaveButtonClicked() {
         String title = editTextTitle.getText().toString();
-        String description = editTextDescription.getText().toString();
         Date date = new Date();
 
-        final TaskEntry task = new TaskEntry(title,description, date);
+        final CategoryEntry task = new CategoryEntry(title, date);
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -145,7 +142,7 @@ public class AddCategoryActivity extends AppCompatActivity {
                 // call finish in any case
                 if (mTaskId == DEFAULT_TASK_ID) {
                     // insert new task
-                    mDb.taskDao().insertTask(task);
+                    mDb.categoryDao().insertTask(task);
                 } else {
                     //update task
                     task.setId(mTaskId);

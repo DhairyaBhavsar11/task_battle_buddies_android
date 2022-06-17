@@ -19,7 +19,6 @@ package com.battlebuddies.ui.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -34,23 +33,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.battlebuddies.R;
 import com.battlebuddies.data.AppExecutors;
 import com.battlebuddies.di.database.AppDatabase;
-import com.battlebuddies.di.model.TaskEntry;
-import com.battlebuddies.ui.adapter.TaskAdapter;
-import com.battlebuddies.ui.viewmodel.MainViewModel;
+import com.battlebuddies.di.model.CategoryEntry;
+import com.battlebuddies.ui.adapter.CatogoriesAdapter;
+import com.battlebuddies.ui.viewmodel.CategoryViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
 
-public class CategoriesActivity extends AppCompatActivity implements TaskAdapter.ItemClickListener {
+public class CategoriesActivity extends AppCompatActivity implements CatogoriesAdapter.ItemClickListener {
 
     // Constant for logging
     private static final String TAG = CategoriesActivity.class.getSimpleName();
     // Member variables for the adapter and RecyclerView
     private RecyclerView mRecyclerView;
-    private TaskAdapter mAdapter;
+    private CatogoriesAdapter mAdapter;
     private AppDatabase mDb;
-    MainViewModel viewModel;
+    CategoryViewModel viewModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +64,7 @@ public class CategoriesActivity extends AppCompatActivity implements TaskAdapter
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Initialize the adapter and attach it to the RecyclerView
-        mAdapter = new TaskAdapter(this, this);
+        mAdapter = new CatogoriesAdapter(this, this);
         setupViewModel();
         mRecyclerView.setAdapter(mAdapter);
 
@@ -92,7 +91,7 @@ public class CategoriesActivity extends AppCompatActivity implements TaskAdapter
                         @Override
                         public void run() {
                         int position = viewHolder.getAdapterPosition();
-                        List<TaskEntry> tasks = mAdapter.getTasks();
+                        List<CategoryEntry> tasks = mAdapter.getTasks();
 //                      mDb.taskDao().deleteTask(tasks.get(position));
                         viewModel.deleteTask(tasks.get(position));
                     }
@@ -103,25 +102,25 @@ public class CategoriesActivity extends AppCompatActivity implements TaskAdapter
         /*
          Set the Floating Action Button (FAB) to its corresponding View.
          Attach an OnClickListener to it, so that when it's clicked, a new intent will be created
-         to launch the AddTaskActivity.
+         to launch the AddCategoryActivity.
          */
         FloatingActionButton fabButton = findViewById(R.id.fab);
 
         fabButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Create a new intent to start an AddTaskActivity
-                Intent addTaskIntent = new Intent(CategoriesActivity.this, AddTaskActivity.class);
+                // Create a new intent to start an AddCategoryActivity
+                Intent addTaskIntent = new Intent(CategoriesActivity.this, AddCategoryActivity.class);
                 startActivity(addTaskIntent);
             }
         });
     }
 
     private void setupViewModel() {
-        viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-        viewModel.getTasks().observe(this, new Observer<List<TaskEntry>>() {
+        viewModel = ViewModelProviders.of(this).get(CategoryViewModel.class);
+        viewModel.getTasks().observe(this, new Observer<List<CategoryEntry>>() {
             @Override
-            public void onChanged(@Nullable List<TaskEntry> taskEntries) {
+            public void onChanged(@Nullable List<CategoryEntry> taskEntries) {
                 Log.d(TAG, "Updating list of tasks from LiveData in ViewModel");
                 mAdapter.setTasks(taskEntries);
                 mAdapter.notifyDataSetChanged(); //optional statement. will work the same without also
@@ -130,17 +129,10 @@ public class CategoriesActivity extends AppCompatActivity implements TaskAdapter
     }
     @Override
     public void onItemClickListener(int itemId) {
-        // Launch AddTaskActivity adding the itemId as an extra in the intent
-        // COMPLETED (2) Launch AddTaskActivity with itemId as extra for the key AddTaskActivity.EXTRA_TASK_ID
-        Intent intent = new Intent(CategoriesActivity.this, AddTaskActivity.class);
-        intent.putExtra(AddTaskActivity.EXTRA_TASK_ID, itemId);
+        // Launch AddCategoryActivity adding the itemId as an extra in the intent
+        // COMPLETED (2) Launch AddCategoryActivity with itemId as extra for the key AddCategoryActivity.EXTRA_TASK_ID
+        Intent intent = new Intent(CategoriesActivity.this, AddCategoryActivity.class);
+        intent.putExtra(AddCategoryActivity.EXTRA_TASK_ID, itemId);
         startActivity(intent);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
     }
 }

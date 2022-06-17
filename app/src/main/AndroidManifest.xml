@@ -27,6 +27,14 @@
             android:launchMode="singleTop"
             android:label="@string/add_task_activity_name"
             android:parentActivityName="com.battlebuddies.ui.view.MainActivity"/>
+        <activity
+            android:name="com.battlebuddies.ui.view.CategoriesActivity"
+            android:label="@string/catogories"
+            android:launchMode="singleTop" />
+        <activity
+            android:name="com.battlebuddies.ui.view.AddCategoryActivity"
+            android:label="@string/add_category"
+            android:launchMode="singleTop" />
     </application>
 
 </manifest>

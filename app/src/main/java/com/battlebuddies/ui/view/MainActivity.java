@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.battlebuddies.R;
@@ -31,6 +32,7 @@ import com.battlebuddies.ui.viewmodel.MainViewModel;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
@@ -141,5 +143,17 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.ItemC
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_main_setting:
+                Intent intent = new Intent(MainActivity.this,CategoriesActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

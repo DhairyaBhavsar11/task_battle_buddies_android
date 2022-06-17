@@ -38,13 +38,13 @@
             android:layout_marginRight="15dp" />
     </LinearLayout>
     <!-- RecyclerView that is responsible for holding a listtaskEntrytask data -->
-        <androidx.recyclerview.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewTasks"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/llSearch"
+        android:layout_marginTop="15dp"
         android:clipToPadding="false"
-            android:layout_below="@+id/llSearch"
-            android:layout_marginTop="15dp"
         android:paddingBottom="80dp" />
 
     <!-- Floating action button that launches AddTaskActivity when clicked -->

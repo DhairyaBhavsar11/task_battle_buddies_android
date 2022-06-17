@@ -23,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.battlebuddies.R;
 import com.battlebuddies.di.database.AppDatabase;
@@ -60,9 +61,12 @@ public class AddTaskActivity extends AppCompatActivity {
     // Member variable for the Database
     private AppDatabase mDb;
     AddTaskViewModel viewModel;
-    private Spinner spinnerCategories;
+    private Spinner spinnerCategories,spinnerPatentTask;
     private String[] categories;
+    private String[] tasks;
     List<CategoryEntry> mCategoryEntries;
+    List<TaskEntry> mTaskEntries;
+    TextView tvCategory,tvParentTask;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_task);
@@ -90,12 +94,18 @@ public class AddTaskActivity extends AppCompatActivity {
                     aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     //Setting the ArrayAdapter data on the Spinner
                     spinnerCategories.setAdapter(aa);
+                    spinnerCategories.setVisibility(View.VISIBLE);
+                    tvCategory.setVisibility(View.VISIBLE);
+                }else {
+                    spinnerCategories.setVisibility(View.GONE);
+                    tvCategory.setVisibility(View.GONE);
                 }
-
                 Intent intent = getIntent();
                 if (intent != null && intent.hasExtra(EXTRA_TASK_ID)) {
                     mButton.setText(R.string.update_button);
                     if (mTaskId == DEFAULT_TASK_ID) {
+                        spinnerPatentTask.setVisibility(View.GONE);
+                        tvParentTask.setVisibility(View.GONE);
                         mTaskId = intent.getIntExtra(EXTRA_TASK_ID, DEFAULT_TASK_ID);
                         viewModel.getTask(mTaskId).observe(AddTaskActivity.this, new Observer<TaskEntry>() {
                             @Override
@@ -105,7 +115,37 @@ public class AddTaskActivity extends AppCompatActivity {
                             }
                         });
                     }
+                }else {
+                    viewModel.getAllTasks().observe(AddTaskActivity.this, new Observer<List<TaskEntry>>() {
+                        @Override
+                        public void onChanged(List<TaskEntry> taskEntries) {
+                            mTaskEntries = taskEntries;
+                            viewModel.getAllTasks().removeObserver(this);
+                            if (taskEntries.size() > 0) {
+                                tasks = new String[taskEntries.size()+1];
+                                tasks[0] = "Select";
+                                for (int i = 0; i < taskEntries.size(); i++) {
+                                    tasks[i+1] = taskEntries.get(i).getTitle();
+                                }
+                                ArrayAdapter aa = new ArrayAdapter(AddTaskActivity.this, android.R.layout.simple_spinner_item, tasks);
+                                aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                //Setting the ArrayAdapter data on the Spinner
+                                spinnerPatentTask.setAdapter(aa);
+                                spinnerPatentTask.setVisibility(View.VISIBLE);
+                                tvParentTask.setVisibility(View.VISIBLE);
+                            }else {
+                                spinnerPatentTask.setVisibility(View.GONE);
+                                tvParentTask.setVisibility(View.GONE);
+                            }
+
+
+                        }
+                    });
                 }
+
+
+
+
             }
         });
 
@@ -125,6 +165,9 @@ public class AddTaskActivity extends AppCompatActivity {
         editTextTitle = findViewById(R.id.editTextTitle);
         editTextDescription = findViewById(R.id.editTextDescription);
         spinnerCategories = findViewById(R.id.spinnerCategories);
+        spinnerPatentTask = findViewById(R.id.spinnerPatentTask);
+        tvCategory = findViewById(R.id.tvCategory);
+        tvParentTask = findViewById(R.id.tvParentTask);
 
         mButton = findViewById(R.id.saveButton);
         mButton.setOnClickListener(new View.OnClickListener() {
@@ -145,6 +188,17 @@ public class AddTaskActivity extends AppCompatActivity {
         if (task == null) {
             return;
         }
+        if (task.getPatentTaskId() == -1){
+            tvParentTask.setVisibility(View.GONE);
+            spinnerPatentTask.setVisibility(View.GONE);
+        }
+        if (task.getCategoryId() == -1){
+            tvCategory.setVisibility(View.GONE);
+            spinnerCategories.setVisibility(View.GONE);
+        }else {
+            tvCategory.setVisibility(View.VISIBLE);
+            spinnerCategories.setVisibility(View.VISIBLE);
+        }
 
         // COMPLETED (8) use the variable task to populate the UI
         editTextTitle.setText(task.getTitle());
@@ -153,6 +207,13 @@ public class AddTaskActivity extends AppCompatActivity {
             for (int i = 0; i < mCategoryEntries.size(); i++) {
                 if (mCategoryEntries.get(i).getId() == task.getCategoryId()){
                     spinnerCategories.setSelection(i);
+                }
+            }
+        }
+        if (task.getPatentTaskId() != -1 && mTaskEntries != null){
+            for (int i = 0; i < mTaskEntries.size(); i++) {
+                if (mTaskEntries.get(i).getId() == task.getPatentTaskId()){
+                    spinnerPatentTask.setSelection(i);
                 }
             }
         }
@@ -166,17 +227,26 @@ public class AddTaskActivity extends AppCompatActivity {
         String title = editTextTitle.getText().toString();
         String description = editTextDescription.getText().toString();
         int categoryId = -1;
-        if (categories != null && categories.length > 0){
-            for (int i = 0; i < categories.length; i++) {
-                if (categories[i].equalsIgnoreCase(spinnerCategories.getSelectedItem().toString())){
-                    categoryId = i+1;
+        if (mCategoryEntries != null && mCategoryEntries.size() > 0){
+            for (int i = 0; i < mCategoryEntries.size(); i++) {
+                if (mCategoryEntries.get(i).getTitle().equalsIgnoreCase(spinnerCategories.getSelectedItem().toString())){
+                    categoryId = mCategoryEntries.get(i).getId();
+                }
+            }
+
+        }
+        int taskId = -1;
+        if (mTaskEntries != null && mTaskEntries.size() > 0 && spinnerPatentTask.getSelectedItemPosition() != 0){
+            for (int i = 0; i < mTaskEntries.size(); i++) {
+                if (mTaskEntries.get(i).getTitle().equalsIgnoreCase(spinnerPatentTask.getSelectedItem().toString())){
+                    taskId = mTaskEntries.get(i).getId();
                 }
             }
 
         }
         Date date = new Date();
 
-        final TaskEntry task = new TaskEntry(title,description,categoryId, date);
+        final TaskEntry task = new TaskEntry(title,description,categoryId,taskId, date);
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {

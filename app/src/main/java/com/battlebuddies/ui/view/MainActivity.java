@@ -225,13 +225,35 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.ItemC
             }
         });
     }
+    private boolean isClickItem = false;
     @Override
-    public void onItemClickListener(int itemId) {
+    public void onItemClickListener(final int itemId, final int parentId, final String title) {
+        isClickItem = true;
         // Launch AddTaskActivity adding the itemId as an extra in the intent
         // COMPLETED (2) Launch AddTaskActivity with itemId as extra for the key AddTaskActivity.EXTRA_TASK_ID
-        Intent intent = new Intent(MainActivity.this, AddTaskActivity.class);
-        intent.putExtra(AddTaskActivity.EXTRA_TASK_ID, itemId);
-        startActivity(intent);
+        viewModel.getChildTasks(itemId).observe(MainActivity.this, new Observer<List<TaskEntry>>() {
+            @Override
+            public void onChanged(List<TaskEntry> taskEntries) {
+                if (isClickItem) {
+                    isClickItem = false;
+                    viewModel.getChildTasks(itemId).removeObserver(this);
+                    if (taskEntries != null) {
+                        if (taskEntries.size() > 0) {
+                            Intent intent = new Intent(MainActivity.this, SubTaskListActivity.class);
+                            intent.putExtra(AddTaskActivity.EXTRA_TASK_ID, itemId);
+                            intent.putExtra("name", title);
+                            startActivity(intent);
+                        } else {
+                            Intent intent = new Intent(MainActivity.this, AddTaskActivity.class);
+                            intent.putExtra(AddTaskActivity.EXTRA_TASK_ID, itemId);
+                            startActivity(intent);
+                        }
+                    }
+                }
+
+            }
+        });
+
     }
 
     @Override

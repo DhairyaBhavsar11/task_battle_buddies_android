@@ -14,7 +14,6 @@ import java.util.List;
 public class AddTaskViewModel extends ViewModel {
 
     // COMPLETED (6) Add a task member variable for the TaskEntry object wrapped in a LiveData
-    private LiveData<TaskEntry> task;
     private final TasksRepository tasksRepository;
     private final CategoriesRepository categoriesRepository;
 
@@ -28,8 +27,7 @@ public class AddTaskViewModel extends ViewModel {
 
     // COMPLETED (7) Create a getter for the task variable
     public LiveData<TaskEntry> getTask(int mTaskId) {
-        task = tasksRepository.getloadTaskById(mTaskId);
-        return task;
+        return tasksRepository.getloadTaskById(mTaskId);
     }
 
     public void updateTask(TaskEntry task) {
@@ -38,6 +36,10 @@ public class AddTaskViewModel extends ViewModel {
 
     public LiveData<List<CategoryEntry>> getAllCategories(){
         return categoriesRepository.getloadAllTasks();
+    }
+
+    public LiveData<List<TaskEntry>> getAllTasks(){
+        return tasksRepository.getloadAllTasks();
     }
 
 

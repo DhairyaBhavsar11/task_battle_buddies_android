@@ -124,7 +124,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     }
 
     public interface ItemClickListener {
-        void onItemClickListener(int itemId);
+        void onItemClickListener(int itemId,int parentId, String title);
     }
 
     // Inner class for creating ViewHolders
@@ -150,7 +150,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         @Override
         public void onClick(View view) {
             int elementId = mTaskEntries.get(getAdapterPosition()).getId();
-            mItemClickListener.onItemClickListener(elementId);
+            int parentId = mTaskEntries.get(getAdapterPosition()).getPatentTaskId();
+            String name = mTaskEntries.get(getAdapterPosition()).getTitle();
+            mItemClickListener.onItemClickListener(elementId,parentId,name);
         }
     }
 }

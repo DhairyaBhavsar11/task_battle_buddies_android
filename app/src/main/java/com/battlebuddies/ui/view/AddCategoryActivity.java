@@ -78,10 +78,10 @@ public class AddCategoryActivity extends AppCompatActivity {
                 mTaskId = intent.getIntExtra(EXTRA_TASK_ID, DEFAULT_TASK_ID);
                 AddCategoryViewModelFactory factory = new AddCategoryViewModelFactory(mDb, mTaskId);
                 viewModel = ViewModelProviders.of(this, factory).get(AddCategoryViewModel.class);
-                viewModel.getTask().observe(this, new Observer<CategoryEntry>() {
+                viewModel.getTask(mTaskId).observe(this, new Observer<CategoryEntry>() {
                     @Override
                     public void onChanged(CategoryEntry taskEntry) {
-                        viewModel.getTask().removeObserver(this);
+                        viewModel.getTask(mTaskId).removeObserver(this);
                         populateUI(taskEntry);
                     }
                 });

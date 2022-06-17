@@ -47,4 +47,7 @@ public class TasksRepository  {
     public LiveData<List<TaskEntry>> filterByName() {
         return database.taskDao().filterByName();
     }
+    public LiveData<List<TaskEntry>> loadAllChildTasks(int id) {
+        return database.taskDao().loadAllChildTasks(id);
+    }
 }

@@ -35,18 +35,38 @@
 
 
     <TextView
+        android:id="@+id/tvCategory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:layout_marginStart="5dp"
         android:text="@string/category"
+        android:visibility="gone"
         android:layout_marginLeft="5dp" />
     <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:padding="0dp"
+        android:visibility="gone"
         android:id="@+id/spinnerCategories"/>
+
+    <TextView
+        android:id="@+id/tvParentTask"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="5dp"
+        android:text="@string/parent_task"
+        android:visibility="gone"
+        android:layout_marginLeft="5dp" />
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:padding="0dp"
+        android:visibility="gone"
+        android:id="@+id/spinnerPatentTask"/>
 
     <!-- Add button -->
     <Button

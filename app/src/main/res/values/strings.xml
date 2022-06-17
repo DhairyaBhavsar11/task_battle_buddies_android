@@ -21,5 +21,7 @@
     <string name="update_button">Update</string>
     <string name="catogories">Catogories</string>
     <string name="title">Title</string>
+    <string name="category_title">Category Title</string>
+    <string name="add_category">Add new Category</string>
 
 </resources>

@@ -15,63 +15,23 @@
 
     <!-- EditText for getttaskEntrytask description input -->
     <EditText
-        android:id="@+id/editTextTaskDescription"
+        android:id="@+id/editTextTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="start"
-        android:hint="@string/edit_task_description"
+        android:hint="@string/title"
         android:paddingBottom="@dimen/activity_horizontal_margin" />
 
-    <!-- TextView and FrameLayout (which contains buttons) for Priority Selection -->
-    <TextView
-        style="@style/TextAppearance.AppCompat.Medium"
-        android:layout_width="wrap_content"
+
+    <EditText
+        android:id="@+id/editTextDescription"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/priority_string"
-        android:textColor="@android:color/primary_text_light" />
-
-        <!-- RadioGroup for visible selection of a priority -->
-        <RadioGroup
-            android:id="@+id/radioGroup"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/activity_horizontal_margin"
-            android:orientation="horizontal"
-            android:weightSum="3">
-
-            <RadioButton
-                android:id="@+id/radButton1"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/materialRed"
-                android:checked="true"
-                android:text="@string/high_priority"
-                android:theme="@style/WhiteRadioButton" />
-
-            <RadioButton
-                android:id="@+id/radButton2"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/materialOrange"
-                android:text="@string/med_priority"
-                android:theme="@style/WhiteRadioButton" />
-
-            <RadioButton
-                android:id="@+id/radButton3"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/materialYellow"
-                android:text="@string/low_priority"
-                android:theme="@style/WhiteRadioButton" />
-
-        </RadioGroup>
+        android:gravity="start"
+        android:lines="5"
+        android:layout_marginTop="10dp"
+        android:hint="@string/edit_task_description"
+        android:paddingBottom="@dimen/activity_horizontal_margin" />
 
     <!-- Add button -->
     <Button
@@ -80,6 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="25dp"
         android:background="@color/colorPrimary"
         android:text="@string/add_button"
         android:textColor="@android:color/primary_text_dark" />

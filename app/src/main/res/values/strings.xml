@@ -19,5 +19,7 @@
 
     <string name="add_button">Add</string>
     <string name="update_button">Update</string>
+    <string name="catogories">Catogories</string>
+    <string name="title">Title</string>
 
 </resources>

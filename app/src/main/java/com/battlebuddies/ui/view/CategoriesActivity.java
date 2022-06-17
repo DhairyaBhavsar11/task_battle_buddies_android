@@ -21,15 +21,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.battlebuddies.R;
-import com.battlebuddies.ui.adapter.TaskAdapter;
-import com.battlebuddies.di.database.AppDatabase;
-import com.battlebuddies.data.AppExecutors;
-import com.battlebuddies.di.model.TaskEntry;
-import com.battlebuddies.ui.viewmodel.MainViewModel;
-
-import java.util.List;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -40,11 +31,21 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.battlebuddies.R;
+import com.battlebuddies.data.AppExecutors;
+import com.battlebuddies.di.database.AppDatabase;
+import com.battlebuddies.di.model.TaskEntry;
+import com.battlebuddies.ui.adapter.TaskAdapter;
+import com.battlebuddies.ui.viewmodel.MainViewModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class MainActivity extends AppCompatActivity implements TaskAdapter.ItemClickListener {
+import java.util.List;
+
+
+public class CategoriesActivity extends AppCompatActivity implements TaskAdapter.ItemClickListener {
 
     // Constant for logging
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = CategoriesActivity.class.getSimpleName();
     // Member variables for the adapter and RecyclerView
     private RecyclerView mRecyclerView;
     private TaskAdapter mAdapter;
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.ItemC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_categories);
        // mDb = AppDatabase.getInstance(getApplicationContext());
 
         // Set the RecyclerView to its corresponding view
@@ -110,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.ItemC
             @Override
             public void onClick(View view) {
                 // Create a new intent to start an AddTaskActivity
-                Intent addTaskIntent = new Intent(MainActivity.this, AddTaskActivity.class);
+                Intent addTaskIntent = new Intent(CategoriesActivity.this, AddTaskActivity.class);
                 startActivity(addTaskIntent);
             }
         });
@@ -131,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.ItemC
     public void onItemClickListener(int itemId) {
         // Launch AddTaskActivity adding the itemId as an extra in the intent
         // COMPLETED (2) Launch AddTaskActivity with itemId as extra for the key AddTaskActivity.EXTRA_TASK_ID
-        Intent intent = new Intent(MainActivity.this, AddTaskActivity.class);
+        Intent intent = new Intent(CategoriesActivity.this, AddTaskActivity.class);
         intent.putExtra(AddTaskActivity.EXTRA_TASK_ID, itemId);
         startActivity(intent);
     }

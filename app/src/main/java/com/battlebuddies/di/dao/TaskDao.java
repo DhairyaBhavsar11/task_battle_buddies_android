@@ -16,7 +16,7 @@ import com.battlebuddies.di.model.TaskEntry;
 @Dao
 public interface TaskDao {
 
-    @Query("SELECT * FROM task ORDER BY priority")
+    @Query("SELECT * FROM task ORDER BY id")
     LiveData<List<TaskEntry>> loadAllTasks();
 
     @Query("SELECT * FROM task WHERE id=:id")

@@ -21,23 +21,22 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioGroup;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.battlebuddies.R;
-import com.battlebuddies.di.database.AppDatabase;
 import com.battlebuddies.data.AppExecutors;
+import com.battlebuddies.di.database.AppDatabase;
 import com.battlebuddies.di.model.TaskEntry;
 import com.battlebuddies.ui.viewmodel.AddTaskViewModel;
 import com.battlebuddies.ui.viewmodel.AddTaskViewModelFactory;
 
 import java.util.Date;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 
-
-public class AddTaskActivity extends AppCompatActivity {
+public class AddCategoryActivity extends AppCompatActivity {
 
     // Extra for the task ID to be received in the intent
     public static final String EXTRA_TASK_ID = "extraTaskId";
@@ -50,7 +49,7 @@ public class AddTaskActivity extends AppCompatActivity {
     // Constant for default task id to be used when not in update mode
     private static final int DEFAULT_TASK_ID = -1;
     // Constant for logging
-    private static final String TAG = AddTaskActivity.class.getSimpleName();
+    private static final String TAG = AddCategoryActivity.class.getSimpleName();
     // Fields for views
     EditText editTextTitle,editTextDescription;
     Button mButton;
@@ -62,7 +61,7 @@ public class AddTaskActivity extends AppCompatActivity {
     AddTaskViewModel viewModel;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_task);
+        setContentView(R.layout.activity_add_category);
 
         initViews();
 

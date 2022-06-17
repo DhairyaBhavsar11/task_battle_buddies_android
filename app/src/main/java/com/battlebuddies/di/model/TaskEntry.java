@@ -13,24 +13,32 @@ public class TaskEntry {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
+    private String title;
     private String description;
-    private int priority;
     // COMPLETED (1) Make updatedAt match a column named updated_at. Tip: Use the ColumnInfo annotation
     @ColumnInfo(name = "updated_at")
     private Date updatedAt;
 
     @Ignore
-    public TaskEntry(String description, int priority, Date updatedAt) {
+    public TaskEntry(String title,String description, Date updatedAt) {
+        this.title=title;
         this.description = description;
-        this.priority = priority;
         this.updatedAt = updatedAt;
     }
 
-    public TaskEntry(int id, String description, int priority, Date updatedAt) {
+    public TaskEntry(int id, String title, String description, Date updatedAt) {
         this.id = id;
+        this.title = title;
         this.description = description;
-        this.priority = priority;
         this.updatedAt = updatedAt;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public int getId() {
@@ -47,14 +55,6 @@ public class TaskEntry {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public int getPriority() {
-        return priority;
-    }
-
-    public void setPriority(int priority) {
-        this.priority = priority;
     }
 
     public Date getUpdatedAt() {

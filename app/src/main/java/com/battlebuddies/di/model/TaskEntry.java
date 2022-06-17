@@ -15,22 +15,33 @@ public class TaskEntry {
     private int id;
     private String title;
     private String description;
+    private int categoryId;
     // COMPLETED (1) Make updatedAt match a column named updated_at. Tip: Use the ColumnInfo annotation
     @ColumnInfo(name = "updated_at")
     private Date updatedAt;
 
     @Ignore
-    public TaskEntry(String title,String description, Date updatedAt) {
+    public TaskEntry(String title,String description,int categoryId, Date updatedAt) {
         this.title=title;
         this.description = description;
+        this.categoryId = categoryId;
         this.updatedAt = updatedAt;
     }
 
-    public TaskEntry(int id, String title, String description, Date updatedAt) {
+    public TaskEntry(int id, String title, String description,int categoryId, Date updatedAt) {
         this.id = id;
         this.title = title;
         this.description = description;
+        this.categoryId = categoryId;
         this.updatedAt = updatedAt;
+    }
+
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getTitle() {
